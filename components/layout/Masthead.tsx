@@ -111,23 +111,14 @@ export default function Masthead() {
 
           {/* Right actions */}
           <div className="masthead__actions">
-            {/* 1. Text Navigation Buttons ("How Ordering Works" & "Browse Products") */}
-            <div className="masthead__text-group">
-              <Link
-                href="/how-ordering-works"
-                className="masthead__ordering-btn"
-                aria-label="How Ordering Works"
-              >
-                How Ordering Works
-              </Link>
-              <Link
-                href="/"
-                className="masthead__ordering-btn"
-                aria-label="Browse Products"
-              >
-                Browse Products
-              </Link>
-            </div>
+            {/* 1. "How Ordering Works" Button */}
+            <Link
+              href="/how-ordering-works"
+              className="masthead__ordering-btn"
+              aria-label="How Ordering Works"
+            >
+              How Ordering Works
+            </Link>
 
             {/* 2. Icon Buttons Group */}
             <div className="masthead__icon-group">
@@ -210,15 +201,6 @@ export default function Masthead() {
               tabIndex={menuOpen ? 0 : -1}
             >
               <span>How Ordering Works</span>
-            </Link>
-          </li>
-          <li>
-            <Link
-              href="/"
-              className="masthead__mobile-link"
-              tabIndex={menuOpen ? 0 : -1}
-            >
-              <span>Browse Products</span>
             </Link>
           </li>
           <li>
@@ -369,19 +351,11 @@ export default function Masthead() {
         .masthead__actions {
           display: flex;
           align-items: center;
-          gap: 14px;
+          gap: 12px;
           flex-shrink: 0;
         }
 
-        /* Shared container for "How Ordering Works" and "Browse Products" */
-        .masthead__text-group {
-          display: inline-flex;
-          align-items: center;
-          gap: 18px;
-          flex-shrink: 0;
-        }
-
-        /* "How Ordering Works" & "Browse Products" Text Buttons */
+        /* "How Ordering Works" Text Button */
         .masthead__ordering-btn {
           display: inline-flex;
           align-items: center;
@@ -560,15 +534,15 @@ export default function Masthead() {
         @media (max-width: 900px) {
           .masthead__menu-toggle { display: flex; }
           .masthead__mobile-nav { display: block; }
-          .masthead__actions { gap: 12px; }
-          .masthead__text-group { gap: 12px; }
+          .masthead__actions { gap: 10px; }
+          .masthead__icon-group { gap: 8px; }
         }
         @media (max-width: 640px) {
-          .masthead__actions { gap: 10px; }
-          .masthead__text-group { gap: 10px; }
+          .masthead__actions { gap: 8px; }
+          .masthead__icon-group { gap: 6px; }
           .masthead__ordering-btn {
             height: 34px;
-            padding: 0 10px;
+            padding: 0 12px;
             font-size: 0.72rem;
             white-space: nowrap;
             flex-shrink: 0;
@@ -579,9 +553,6 @@ export default function Masthead() {
             min-width: 34px;
             min-height: 34px;
           }
-          .masthead__icon-group {
-            gap: 6px;
-          }
           .masthead__menu-toggle {
             width: 34px;
             height: 34px;
@@ -591,12 +562,12 @@ export default function Masthead() {
           .masthead__tagline { display: none; }
           .masthead__logo-img { height: 28px; }
           .masthead__logo-crrdc { font-size: var(--text-base); }
-          .masthead__actions { gap: 8px; }
-          .masthead__text-group { gap: 8px; }
+          .masthead__actions { gap: 6px; }
+          .masthead__icon-group { gap: 5px; }
           .masthead__ordering-btn {
             height: 32px;
-            padding: 0 7px;
-            font-size: 0.65rem;
+            padding: 0 9px;
+            font-size: 0.68rem;
           }
           .masthead__icon-btn {
             width: 32px;
@@ -604,24 +575,17 @@ export default function Masthead() {
             min-width: 32px;
             min-height: 32px;
           }
-          .masthead__icon-group {
-            gap: 5px;
-          }
           .masthead__menu-toggle {
             width: 32px;
             height: 32px;
           }
         }
         @media (max-width: 380px) {
-          .masthead__actions { gap: 6px; }
-          .masthead__text-group { gap: 6px; }
+          .masthead__actions { gap: 5px; }
+          .masthead__icon-group { gap: 4px; }
           .masthead__ordering-btn {
-            padding: 0 5px;
-            font-size: 0.6rem;
-            letter-spacing: -0.01em;
-          }
-          .masthead__icon-group {
-            gap: 4px;
+            padding: 0 7px;
+            font-size: 0.64rem;
           }
           .masthead__icon-btn {
             width: 30px;

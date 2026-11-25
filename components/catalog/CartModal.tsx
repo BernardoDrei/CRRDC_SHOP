@@ -1,8 +1,9 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import Link from "next/link";
 import ModalWrapper from "./ModalWrapper";
+import ConfirmModal from "./ConfirmModal";
 import {
   X,
   Trash2,
@@ -30,6 +31,8 @@ export default function CartModal({ isOpen, onClose }: CartModalProps) {
   const [voucherCode, setVoucherCode] = useState("");
   const [voucherDiscount, setVoucherDiscount] = useState(0);
   const [voucherMessage, setVoucherMessage] = useState<{ text: string; type: "success" | "error" } | null>(null);
+  const [confirmClearOpen, setConfirmClearOpen] = useState(false);
+  const clearBtnRef = useRef<HTMLButtonElement | null>(null);
 
   // Lock body scroll when modal is open to ensure constant positioning
   useEffect(() => {
@@ -65,7 +68,8 @@ export default function CartModal({ isOpen, onClose }: CartModalProps) {
   const finalTotal = Math.max(0, totalPHP - voucherDiscount);
 
   return (
-    <ModalWrapper
+    <>
+      <ModalWrapper
       isOpen={isOpen}
       onClose={onClose}
       maxWidth="min(92vw, 520px)"
@@ -83,15 +87,10 @@ export default function CartModal({ isOpen, onClose }: CartModalProps) {
           <div className="header-actions-group">
             {items.length > 0 && (
               <button
+                ref={clearBtnRef}
                 type="button"
                 className="clear-all-btn"
-                onClick={() => {
-                  if (window.confirm("Remove all items from your cart?")) {
-                    clearCart();
-                    setVoucherDiscount(0);
-                    setVoucherMessage(null);
-                  }
-                }}
+                onClick={() => setConfirmClearOpen(true)}
               >
                 Clear all
               </button>
@@ -762,5 +761,21 @@ export default function CartModal({ isOpen, onClose }: CartModalProps) {
         }
       `}</style>
     </ModalWrapper>
+
+    <ConfirmModal
+      isOpen={confirmClearOpen}
+      onClose={() => setConfirmClearOpen(false)}
+      onConfirm={() => {
+        clearCart();
+        setVoucherDiscount(0);
+        setVoucherMessage(null);
+      }}
+      title="Clear your cart?"
+      message="This will remove all items from your cart."
+      confirmLabel="Clear Cart"
+      cancelLabel="Cancel"
+      triggerRef={clearBtnRef}
+    />
+  </>
   );
 }

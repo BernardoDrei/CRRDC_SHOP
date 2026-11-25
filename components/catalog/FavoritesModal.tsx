@@ -1,8 +1,9 @@
 "use client";
 
-import { useEffect } from "react";
+import { useEffect, useState, useRef } from "react";
 import Link from "next/link";
 import ModalWrapper from "./ModalWrapper";
+import ConfirmModal from "./ConfirmModal";
 import { Heart, X, Trash2, Plus, ShoppingBag } from "lucide-react";
 import type { Product } from "@/types";
 import { formatPHP } from "@/types";
@@ -26,6 +27,18 @@ export default function FavoritesModal({
   onAddToCart,
   onOpenCart,
 }: FavoritesModalProps) {
+  const [confirmClearOpen, setConfirmClearOpen] = useState(false);
+  const clearFavBtnRef = useRef<HTMLButtonElement | null>(null);
+
+  const handleClearFavorites = () => {
+    try {
+      localStorage.setItem("crrdc-wishlist", "[]");
+      window.dispatchEvent(new Event("crrdc-wishlist-updated"));
+    } catch (e) {
+      console.error(e);
+    }
+  };
+
   // Lock body scroll when modal is open
   useEffect(() => {
     if (isOpen) {
@@ -42,7 +55,8 @@ export default function FavoritesModal({
   const favoriteProducts = products.filter((p) => favoriteIds.includes(p.id));
 
   return (
-    <ModalWrapper
+    <>
+      <ModalWrapper
       isOpen={isOpen}
       onClose={onClose}
       maxWidth="min(92vw, 480px)"
@@ -62,14 +76,27 @@ export default function FavoritesModal({
             </div>
           </div>
 
-          <button
-            type="button"
-            className="modal-close-btn"
-            onClick={onClose}
-            aria-label="Close favorites"
-          >
-            <X size={18} />
-          </button>
+          <div className="header-actions-group">
+            {favoriteProducts.length > 0 && (
+              <button
+                ref={clearFavBtnRef}
+                type="button"
+                className="clear-all-btn"
+                onClick={() => setConfirmClearOpen(true)}
+              >
+                Clear all
+              </button>
+            )}
+
+            <button
+              type="button"
+              className="modal-close-btn"
+              onClick={onClose}
+              aria-label="Close favorites"
+            >
+              <X size={18} />
+            </button>
+          </div>
         </header>
 
         {/* Body */}
@@ -413,7 +440,36 @@ export default function FavoritesModal({
         .view-cart-link-btn:hover {
           background-color: #166534;
         }
+        .header-actions-group {
+          display: flex;
+          align-items: center;
+          gap: 12px;
+        }
+        .clear-all-btn {
+          background: transparent;
+          border: none;
+          color: #ef4444;
+          font-size: 0.8rem;
+          font-weight: 600;
+          cursor: pointer;
+          padding: 4px 6px;
+        }
+        .clear-all-btn:hover {
+          text-decoration: underline;
+        }
       `}</style>
     </ModalWrapper>
+
+    <ConfirmModal
+      isOpen={confirmClearOpen}
+      onClose={() => setConfirmClearOpen(false)}
+      onConfirm={handleClearFavorites}
+      title="Clear your favorites?"
+      message="This will remove all saved items from your favorites."
+      confirmLabel="Clear Favorites"
+      cancelLabel="Cancel"
+      triggerRef={clearFavBtnRef}
+    />
+  </>
   );
 }

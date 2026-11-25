@@ -1,15 +1,19 @@
 "use client";
 
 // app/(public)/cart/CartView.tsx — Interactive Cart review component
+import { useState, useRef } from "react";
 import Link from "next/link";
 import { Trash2, ShoppingBag, ArrowRight, ArrowLeft } from "lucide-react";
 import { useCart } from "@/hooks/useCart";
 import { useLanguage } from "@/components/layout/LanguageContext";
 import { formatPHP, breakdownRiceQty } from "@/types";
+import ConfirmModal from "@/components/catalog/ConfirmModal";
 
 export default function CartView() {
   const { items, totalItems, totalPHP, updateQuantity, removeItem, clearCart } = useCart();
   const { t } = useLanguage();
+  const [confirmClearOpen, setConfirmClearOpen] = useState(false);
+  const clearBtnRef = useRef<HTMLButtonElement | null>(null);
 
   if (items.length === 0) {
     return (
@@ -72,7 +76,12 @@ export default function CartView() {
         <div className="cart-view__items">
           <div className="cart-view__header">
             <h2 className="cart-view__section-title">{t("cartItems")} ({totalItems})</h2>
-            <button type="button" onClick={clearCart} className="cart-view__clear-btn">
+            <button
+              ref={clearBtnRef}
+              type="button"
+              onClick={() => setConfirmClearOpen(true)}
+              className="cart-view__clear-btn"
+            >
               {t("clearCart")}
             </button>
           </div>
@@ -397,6 +406,19 @@ export default function CartView() {
           .cart-view__grid { grid-template-columns: 1fr; }
         }
       `}</style>
+
+      <ConfirmModal
+        isOpen={confirmClearOpen}
+        onClose={() => setConfirmClearOpen(false)}
+        onConfirm={() => {
+          clearCart();
+        }}
+        title="Clear your cart?"
+        message="This will remove all items from your cart."
+        confirmLabel="Clear Cart"
+        cancelLabel="Cancel"
+        triggerRef={clearBtnRef}
+      />
     </div>
   );
 }
