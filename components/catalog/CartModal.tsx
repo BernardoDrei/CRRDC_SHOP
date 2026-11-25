@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react";
 import Link from "next/link";
+import ModalWrapper from "./ModalWrapper";
 import {
   X,
   Trash2,
@@ -64,14 +65,12 @@ export default function CartModal({ isOpen, onClose }: CartModalProps) {
   const finalTotal = Math.max(0, totalPHP - voucherDiscount);
 
   return (
-    <div className="cart-modal-backdrop" onClick={onClose} aria-hidden={!isOpen}>
-      <div
-        className="cart-modal-dialog"
-        onClick={(e) => e.stopPropagation()}
-        role="dialog"
-        aria-modal="true"
-        aria-labelledby="cart-modal-title"
-      >
+    <ModalWrapper
+      isOpen={isOpen}
+      onClose={onClose}
+      maxWidth="min(92vw, 520px)"
+      ariaLabelledBy="cart-modal-title"
+    >
         {/* ── 1. Header ── */}
         <header className="cart-modal-header">
           <div className="header-title-group">
@@ -299,60 +298,8 @@ export default function CartModal({ isOpen, onClose }: CartModalProps) {
             </Link>
           </footer>
         )}
-      </div>
 
       <style jsx>{`
-        /* ── Backdrop Overlay (Constant Viewport Position) ── */
-        .cart-modal-backdrop {
-          position: fixed;
-          inset: 0;
-          background: oklch(from var(--color-ink) l c h / 0.5);
-          backdrop-filter: blur(2px);
-          z-index: 10000;
-          animation: fadeIn 180ms ease-out;
-        }
-
-        @keyframes fadeIn {
-          from {
-            opacity: 0;
-          }
-          to {
-            opacity: 1;
-          }
-        }
-
-        /* ── Centered Modal Dialog (Constant Viewport Center) ── */
-        .cart-modal-dialog {
-          position: fixed;
-          top: 50%;
-          left: 50%;
-          transform: translate(-50%, -50%);
-          width: 100%;
-          max-width: min(92vw, 520px);
-          max-height: 85vh;
-          max-height: 85dvh;
-          background-color: #ffffff;
-          border-radius: 16px;
-          border: 1px solid #e2e8f0;
-          box-shadow: 0 20px 60px oklch(0% 0 0 / 0.35);
-          display: flex;
-          flex-direction: column;
-          overflow: hidden;
-          z-index: 10001;
-          animation: popCenter 200ms cubic-bezier(0.16, 1, 0.3, 1);
-        }
-
-        @keyframes popCenter {
-          from {
-            opacity: 0;
-            transform: translate(-50%, -46%) scale(0.97);
-          }
-          to {
-            opacity: 1;
-            transform: translate(-50%, -50%) scale(1);
-          }
-        }
-
         /* ── Header ── */
         .cart-modal-header {
           display: flex;
@@ -814,6 +761,6 @@ export default function CartModal({ isOpen, onClose }: CartModalProps) {
           transform: none !important;
         }
       `}</style>
-    </div>
+    </ModalWrapper>
   );
 }

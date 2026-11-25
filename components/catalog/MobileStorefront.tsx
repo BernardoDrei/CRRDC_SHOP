@@ -1420,13 +1420,11 @@ export default function MobileStorefront({ initialProducts }: MobileStorefrontPr
         }
 
         .filter-sheet {
-          position: fixed;
-          top: 50%;
-          left: 50%;
-          transform: translate(-50%, -50%);
-          width: 92%;
-          max-width: 480px;
+          position: relative;
+          width: 100%;
+          max-width: min(92vw, 480px);
           max-height: 85vh;
+          max-height: 85dvh;
           overflow-y: auto;
           background: #ffffff;
           border-radius: 20px;
@@ -1535,12 +1533,12 @@ export default function MobileStorefront({ initialProducts }: MobileStorefrontPr
 
         /* Notify modal */
         .notify-modal {
-          position: fixed;
-          top: 50%;
-          left: 50%;
-          transform: translate(-50%, -50%);
-          width: 92%;
-          max-width: 400px;
+          position: relative;
+          width: 100%;
+          max-width: min(92vw, 400px);
+          max-height: 85vh;
+          max-height: 85dvh;
+          overflow-y: auto;
           background: #ffffff;
           border-radius: 20px;
           padding: 24px;

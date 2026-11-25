@@ -440,7 +440,7 @@ img, svg, video {
 /* Page enter transition */
 @keyframes page-enter {
   from { opacity: 0; transform: translateY(8px); }
-  to   { opacity: 1; transform: translateY(0); }
+  to   { opacity: 1; transform: none; }
 }
 .page-enter {
   animation: page-enter var(--dur-slow) var(--ease-out) both;

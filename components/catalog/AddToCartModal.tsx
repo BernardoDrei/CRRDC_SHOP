@@ -2,6 +2,7 @@
 
 import { useEffect } from "react";
 import { Check, X, ShoppingBag } from "lucide-react";
+import ModalWrapper from "./ModalWrapper";
 import type { Product } from "@/types";
 import { formatPHP } from "@/types";
 
@@ -35,14 +36,13 @@ export default function AddToCartModal({
   const lineTotal = product.price_php * quantity;
 
   return (
-    <div className="add-to-cart-backdrop" onClick={onClose} aria-hidden={!isOpen}>
-      <div
-        className="add-to-cart-modal"
-        onClick={(e) => e.stopPropagation()}
-        role="dialog"
-        aria-modal="true"
-        aria-labelledby="modal-title"
-      >
+    <ModalWrapper
+      isOpen={isOpen}
+      onClose={onClose}
+      maxWidth="min(92vw, 440px)"
+      ariaLabelledBy="modal-title"
+    >
+      <div className="add-to-cart-inner">
         {/* Close Button */}
         <button
           type="button"
@@ -113,45 +113,12 @@ export default function AddToCartModal({
       </div>
 
       <style jsx>{`
-        /* ── Non-blocking Viewport Overlay ── */
-        .add-to-cart-backdrop {
-          position: fixed;
-          inset: 0;
-          background: transparent;
-          pointer-events: none;
-          z-index: 10000;
-        }
-
-        /* ── Centered Modal Dialog (Constant Center Position) ── */
-        .add-to-cart-modal {
-          position: fixed;
-          top: 50%;
-          left: 50%;
-          transform: translate(-50%, -50%);
-          background: #ffffff;
-          border-radius: 20px;
-          width: 100%;
-          max-width: min(92vw, 440px);
-          max-height: 85vh;
-          overflow-y: auto;
-          padding: 24px;
-          box-shadow: 0 20px 60px oklch(0% 0 0 / 0.35);
+        .add-to-cart-inner {
+          position: relative;
           display: flex;
           flex-direction: column;
-          z-index: 10001;
-          pointer-events: auto;
-          animation: popCenter 200ms cubic-bezier(0.16, 1, 0.3, 1);
-        }
-
-        @keyframes popCenter {
-          from {
-            opacity: 0;
-            transform: translate(-50%, -46%) scale(0.96);
-          }
-          to {
-            opacity: 1;
-            transform: translate(-50%, -50%) scale(1);
-          }
+          padding: 24px;
+          overflow-y: auto;
         }
 
         .modal-close-btn {
@@ -303,6 +270,6 @@ export default function AddToCartModal({
           background-color: #166534;
         }
       `}</style>
-    </div>
+    </ModalWrapper>
   );
 }
