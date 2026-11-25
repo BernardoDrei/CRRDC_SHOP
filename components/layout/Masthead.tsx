@@ -111,62 +111,74 @@ export default function Masthead() {
 
           {/* Right actions */}
           <div className="masthead__actions">
-            {/* 1. "How Ordering Works" Text Button */}
-            <Link
-              href="/how-ordering-works"
-              className="masthead__ordering-btn"
-              aria-label="How Ordering Works"
-            >
-              How Ordering Works
-            </Link>
+            {/* 1. Text Navigation Buttons ("How Ordering Works" & "Browse Products") */}
+            <div className="masthead__text-group">
+              <Link
+                href="/how-ordering-works"
+                className="masthead__ordering-btn"
+                aria-label="How Ordering Works"
+              >
+                How Ordering Works
+              </Link>
+              <Link
+                href="/"
+                className="masthead__ordering-btn"
+                aria-label="Browse Products"
+              >
+                Browse Products
+              </Link>
+            </div>
 
-            {/* 2. Favorites Button */}
-            <Link
-              href="/?openFavorites=true"
-              onClick={handleOpenFavorites}
-              className="masthead__icon-btn"
-              aria-label={`Favorites (${wishlistCount} saved)`}
-              title="Your Favorites"
-            >
-              <Heart
-                size={18}
-                className={wishlistCount > 0 ? "is-favorited" : ""}
-                fill={wishlistCount > 0 ? "var(--color-error)" : "none"}
-                stroke="currentColor"
-                aria-hidden="true"
-              />
-              {wishlistCount > 0 && (
-                <span className="masthead__badge masthead__badge--error" aria-hidden="true">
-                  {wishlistCount > 99 ? "99+" : wishlistCount}
-                </span>
-              )}
-            </Link>
+            {/* 2. Icon Buttons Group */}
+            <div className="masthead__icon-group">
+              {/* Favorites Button */}
+              <Link
+                href="/?openFavorites=true"
+                onClick={handleOpenFavorites}
+                className="masthead__icon-btn"
+                aria-label={`Favorites (${wishlistCount} saved)`}
+                title="Your Favorites"
+              >
+                <Heart
+                  size={18}
+                  className={wishlistCount > 0 ? "is-favorited" : ""}
+                  fill={wishlistCount > 0 ? "var(--color-error)" : "none"}
+                  stroke="currentColor"
+                  aria-hidden="true"
+                />
+                {wishlistCount > 0 && (
+                  <span className="masthead__badge masthead__badge--error" aria-hidden="true">
+                    {wishlistCount > 99 ? "99+" : wishlistCount}
+                  </span>
+                )}
+              </Link>
 
-            {/* 3. Cart Button */}
-            <Link
-              href="/cart"
-              onClick={handleOpenCart}
-              className="masthead__icon-btn"
-              aria-label={`Shopping cart (${totalItems} items)`}
-              title="Shopping Cart"
-            >
-              <ShoppingCart size={18} stroke="currentColor" aria-hidden="true" />
-              {totalItems > 0 && (
-                <span className="masthead__badge masthead__badge--accent" aria-hidden="true">
-                  {totalItems > 99 ? "99+" : totalItems}
-                </span>
-              )}
-            </Link>
+              {/* Cart Button */}
+              <Link
+                href="/cart"
+                onClick={handleOpenCart}
+                className="masthead__icon-btn"
+                aria-label={`Shopping cart (${totalItems} items)`}
+                title="Shopping Cart"
+              >
+                <ShoppingCart size={18} stroke="currentColor" aria-hidden="true" />
+                {totalItems > 0 && (
+                  <span className="masthead__badge masthead__badge--accent" aria-hidden="true">
+                    {totalItems > 99 ? "99+" : totalItems}
+                  </span>
+                )}
+              </Link>
 
-            {/* 4. User / Admin Button */}
-            <Link
-              href={isAdminPath ? "/admin/dashboard" : "/admin/login"}
-              className="masthead__icon-btn"
-              aria-label={isAdminPath ? "Admin Dashboard" : "Admin Login"}
-              title={isAdminPath ? "Admin Dashboard" : "Admin Account"}
-            >
-              <User size={18} stroke="currentColor" aria-hidden="true" />
-            </Link>
+              {/* User / Admin Button */}
+              <Link
+                href={isAdminPath ? "/admin/dashboard" : "/admin/login"}
+                className="masthead__icon-btn"
+                aria-label={isAdminPath ? "Admin Dashboard" : "Admin Login"}
+                title={isAdminPath ? "Admin Dashboard" : "Admin Account"}
+              >
+                <User size={18} stroke="currentColor" aria-hidden="true" />
+              </Link>
+            </div>
 
             {/* Mobile menu toggle */}
             <button
@@ -198,6 +210,15 @@ export default function Masthead() {
               tabIndex={menuOpen ? 0 : -1}
             >
               <span>How Ordering Works</span>
+            </Link>
+          </li>
+          <li>
+            <Link
+              href="/"
+              className="masthead__mobile-link"
+              tabIndex={menuOpen ? 0 : -1}
+            >
+              <span>Browse Products</span>
             </Link>
           </li>
           <li>
@@ -348,17 +369,25 @@ export default function Masthead() {
         .masthead__actions {
           display: flex;
           align-items: center;
-          gap: var(--space-3);
+          gap: 14px;
           flex-shrink: 0;
         }
 
-        /* "How Ordering Works" Text Button */
+        /* Shared container for "How Ordering Works" and "Browse Products" */
+        .masthead__text-group {
+          display: inline-flex;
+          align-items: center;
+          gap: 18px;
+          flex-shrink: 0;
+        }
+
+        /* "How Ordering Works" & "Browse Products" Text Buttons */
         .masthead__ordering-btn {
           display: inline-flex;
           align-items: center;
           justify-content: center;
           height: 38px;
-          padding: 0 var(--space-4);
+          padding: 0 var(--space-4, 16px);
           border-radius: var(--radius-full);
           border: 1px solid oklch(from var(--color-primary-fg) l c h / 0.22);
           background-color: oklch(from var(--color-primary-fg) l c h / 0.12);
@@ -368,7 +397,7 @@ export default function Masthead() {
           text-decoration: none;
           white-space: nowrap;
           letter-spacing: 0.01em;
-          margin-right: 8px;
+          flex-shrink: 0;
           transition: background-color 180ms var(--ease-out),
                       border-color 180ms var(--ease-out),
                       color 180ms var(--ease-out);
@@ -378,10 +407,19 @@ export default function Masthead() {
           background-color: #d89700 !important;
           border-color: #d89700 !important;
           color: var(--color-primary-dark) !important;
+          transform: none !important;
         }
         .masthead__ordering-btn:focus-visible {
           outline: 2px solid var(--color-accent);
           outline-offset: 2px;
+        }
+
+        /* Shared Icon Button Group */
+        .masthead__icon-group {
+          display: inline-flex;
+          align-items: center;
+          gap: 8px;
+          flex-shrink: 0;
         }
 
         /* Shared Icon Button Style: Favorites, Cart, User */
@@ -522,19 +560,27 @@ export default function Masthead() {
         @media (max-width: 900px) {
           .masthead__menu-toggle { display: flex; }
           .masthead__mobile-nav { display: block; }
-          .masthead__actions { gap: var(--space-2); }
+          .masthead__actions { gap: 12px; }
+          .masthead__text-group { gap: 12px; }
         }
         @media (max-width: 640px) {
+          .masthead__actions { gap: 10px; }
+          .masthead__text-group { gap: 10px; }
           .masthead__ordering-btn {
             height: 34px;
             padding: 0 10px;
             font-size: 0.72rem;
+            white-space: nowrap;
+            flex-shrink: 0;
           }
           .masthead__icon-btn {
             width: 34px;
             height: 34px;
             min-width: 34px;
             min-height: 34px;
+          }
+          .masthead__icon-group {
+            gap: 6px;
           }
           .masthead__menu-toggle {
             width: 34px;
@@ -543,11 +589,45 @@ export default function Masthead() {
         }
         @media (max-width: 480px) {
           .masthead__tagline { display: none; }
-          .masthead__logo-img { height: 30px; }
-          .masthead__logo-crrdc { font-size: var(--text-lg); }
+          .masthead__logo-img { height: 28px; }
+          .masthead__logo-crrdc { font-size: var(--text-base); }
+          .masthead__actions { gap: 8px; }
+          .masthead__text-group { gap: 8px; }
           .masthead__ordering-btn {
+            height: 32px;
             padding: 0 7px;
-            font-size: 0.68rem;
+            font-size: 0.65rem;
+          }
+          .masthead__icon-btn {
+            width: 32px;
+            height: 32px;
+            min-width: 32px;
+            min-height: 32px;
+          }
+          .masthead__icon-group {
+            gap: 5px;
+          }
+          .masthead__menu-toggle {
+            width: 32px;
+            height: 32px;
+          }
+        }
+        @media (max-width: 380px) {
+          .masthead__actions { gap: 6px; }
+          .masthead__text-group { gap: 6px; }
+          .masthead__ordering-btn {
+            padding: 0 5px;
+            font-size: 0.6rem;
+            letter-spacing: -0.01em;
+          }
+          .masthead__icon-group {
+            gap: 4px;
+          }
+          .masthead__icon-btn {
+            width: 30px;
+            height: 30px;
+            min-width: 30px;
+            min-height: 30px;
           }
         }
       `}</style>

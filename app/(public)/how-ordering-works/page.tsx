@@ -90,7 +90,7 @@ export default function HowOrderingWorksPage() {
           flex-direction: column;
           justify-content: center;
           align-items: center;
-          padding: clamp(16px, 2.5vh, 32px) clamp(16px, 3.5vw, 48px);
+          padding: clamp(48px, 6vh, 64px) clamp(20px, 3.5vw, 56px);
           box-sizing: border-box;
           overflow-x: hidden;
         }
@@ -107,12 +107,12 @@ export default function HowOrderingWorksPage() {
         /* ── Header ── */
         .page-header {
           text-align: center;
-          margin-bottom: clamp(16px, 2.5vh, 26px);
+          margin-bottom: clamp(40px, 5vh, 56px);
         }
 
         .page-title {
           font-family: var(--font-display);
-          font-size: clamp(1.85rem, 2.8vw, 2.6rem);
+          font-size: clamp(2rem, 3.2vw, 3rem);
           color: var(--color-primary-dark);
           margin: 0;
           font-weight: 800;
@@ -128,7 +128,7 @@ export default function HowOrderingWorksPage() {
         .steps-grid {
           display: grid;
           grid-template-columns: repeat(4, 1fr);
-          gap: clamp(12px, 1.4vw, 20px);
+          gap: clamp(24px, 2vw, 32px);
           width: 100%;
           align-items: stretch;
         }
@@ -137,7 +137,7 @@ export default function HowOrderingWorksPage() {
         @media (max-width: 1023px) and (min-width: 640px) {
           .steps-grid {
             grid-template-columns: repeat(2, 1fr);
-            gap: 14px 16px;
+            gap: 24px;
           }
         }
 
@@ -145,26 +145,26 @@ export default function HowOrderingWorksPage() {
         @media (max-width: 639px) {
           .how-ordering-page {
             justify-content: flex-start;
-            padding: 20px 16px 36px;
+            padding: 36px 16px 48px;
             min-height: auto;
           }
 
           .page-header {
-            margin-bottom: 18px;
+            margin-bottom: 32px;
           }
 
           .page-title {
-            font-size: clamp(1.65rem, 6vw, 2.1rem);
+            font-size: clamp(1.85rem, 6vw, 2.25rem);
           }
 
           .steps-grid {
             grid-template-columns: 1fr;
-            gap: 12px;
+            gap: 18px;
           }
 
           .cta-wrapper {
             margin-top: 32px;
-            margin-bottom: 12px;
+            margin-bottom: 16px;
           }
         }
 
@@ -173,7 +173,7 @@ export default function HowOrderingWorksPage() {
           background-color: var(--color-paper);
           border: 1px solid var(--color-border);
           border-radius: var(--radius-xl, 16px);
-          padding: clamp(16px, 2vh, 24px) clamp(16px, 1.4vw, 22px);
+          padding: clamp(28px, 3.2vh, 36px) clamp(24px, 2vw, 32px);
           display: flex;
           flex-direction: column;
           height: 100%;
@@ -192,18 +192,18 @@ export default function HowOrderingWorksPage() {
           display: flex;
           align-items: center;
           justify-content: space-between;
-          margin-bottom: clamp(10px, 1.4vh, 16px);
+          margin-bottom: 20px;
         }
 
         .step-number-badge {
-          width: 40px;
-          height: 40px;
-          min-width: 40px;
+          width: 44px;
+          height: 44px;
+          min-width: 44px;
           border-radius: var(--radius-full);
           background-color: var(--color-primary-dark);
           color: #facc15;
           font-family: var(--font-display);
-          font-size: 1.15rem;
+          font-size: 1.25rem;
           font-weight: 800;
           display: flex;
           align-items: center;
@@ -212,8 +212,8 @@ export default function HowOrderingWorksPage() {
         }
 
         .step-icon-wrap {
-          width: 34px;
-          height: 34px;
+          width: 38px;
+          height: 38px;
           border-radius: var(--radius-full);
           background-color: oklch(from var(--color-primary) l c h / 0.1);
           color: var(--color-primary-dark);
@@ -224,18 +224,18 @@ export default function HowOrderingWorksPage() {
 
         .step-title {
           font-family: var(--font-display);
-          font-size: clamp(1.15rem, 1.25vw, 1.35rem);
+          font-size: clamp(1.2rem, 1.3vw, 1.45rem);
           font-weight: 700;
           color: var(--color-heading);
-          margin: 0 0 8px;
+          margin: 0 0 16px;
           line-height: 1.25;
           letter-spacing: -0.015em;
         }
 
         .step-description {
-          font-size: clamp(0.95rem, 0.98vw, 1.05rem);
+          font-size: clamp(1rem, 1.05vw, 1.125rem);
           color: var(--color-ink-2);
-          line-height: 1.5;
+          line-height: 1.55;
           margin: 0;
           flex-grow: 1;
         }
@@ -243,42 +243,44 @@ export default function HowOrderingWorksPage() {
         /* Mobile specific card adjustments */
         @media (max-width: 639px) {
           .step-card {
-            padding: 16px 18px;
+            padding: 22px 20px;
             border-radius: var(--radius-lg, 12px);
           }
 
           .step-header {
-            margin-bottom: 10px;
+            margin-bottom: 16px;
           }
 
           .step-number-badge {
-            width: 36px;
-            height: 36px;
-            min-width: 36px;
-            font-size: 1.05rem;
+            width: 40px;
+            height: 40px;
+            min-width: 40px;
+            font-size: 1.15rem;
           }
 
           .step-icon-wrap {
-            width: 30px;
-            height: 30px;
+            width: 34px;
+            height: 34px;
           }
 
           .step-title {
-            font-size: clamp(1.1rem, 4.5vw, 1.25rem);
-            margin-bottom: 6px;
+            font-size: clamp(1.15rem, 4.5vw, 1.3rem);
+            margin-bottom: 12px;
           }
 
           .step-description {
-            font-size: clamp(0.95rem, 3.8vw, 1rem);
-            line-height: 1.45;
+            font-size: clamp(1rem, 3.8vw, 1.08rem);
+            line-height: 1.5;
           }
         }
 
         /* ── Action Button ── */
         .cta-wrapper {
           display: flex;
+          align-items: center;
           justify-content: center;
-          margin-top: clamp(28px, 4.8vh, 52px);
+          gap: 20px;
+          margin-top: clamp(40px, 5vh, 56px);
         }
 
         .cta-btn {
@@ -286,8 +288,8 @@ export default function HowOrderingWorksPage() {
           align-items: center;
           justify-content: center;
           gap: 10px;
-          min-height: 48px;
-          padding: 0 32px;
+          min-height: 50px;
+          padding: 0 34px;
           border-radius: var(--radius-full);
           border: 1px solid var(--color-primary-dark);
           background-color: var(--color-primary-dark);
