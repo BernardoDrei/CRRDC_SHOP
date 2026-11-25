@@ -7,7 +7,7 @@ import { useRouter } from "next/navigation";
 import { useCart } from "@/hooks/useCart";
 import { useLanguage } from "@/components/layout/LanguageContext";
 import { formatPHP, breakdownRiceQty, type OrderType } from "@/types";
-import { AlertCircle, ArrowLeft, ShieldAlert, CheckCircle2, Calendar, Building, FileText, User } from "lucide-react";
+import { AlertCircle, ArrowLeft, ShieldAlert, CheckCircle2, Calendar, Building, FileText, User, ArrowRight } from "lucide-react";
 
 export default function CheckoutView() {
   const router = useRouter();
@@ -334,8 +334,8 @@ export default function CheckoutView() {
               <span>Submitting Order...</span>
             ) : (
               <>
-                <CheckCircle2 size={18} aria-hidden="true" />
                 <span>Submit Order</span>
+                <ArrowRight size={16} aria-hidden="true" />
               </>
             )}
           </button>
@@ -401,9 +401,35 @@ export default function CheckoutView() {
 
         .checkout-error { display: flex; align-items: center; gap: var(--space-2); padding: var(--space-3); background-color: oklch(from var(--color-error) l c h / 0.1); color: var(--color-error); font-size: var(--text-xs); border-radius: var(--radius-md); margin-bottom: var(--space-4); }
 
-        .submit-order-btn { width: 100%; display: flex; align-items: center; justify-content: center; gap: var(--space-2); padding: var(--space-4) var(--space-6); background-color: var(--color-primary); color: var(--color-primary-fg); border: none; border-radius: var(--radius-md); font-size: var(--text-base); font-weight: 600; cursor: pointer; transition: background-color var(--dur-fast); margin-bottom: var(--space-4); }
-        .submit-order-btn:hover:not(:disabled) { background-color: var(--color-primary-hover); }
-        .submit-order-btn:disabled { opacity: 0.7; cursor: wait; }
+        .submit-order-btn {
+          width: 100%;
+          display: inline-flex;
+          align-items: center;
+          justify-content: center;
+          gap: 8px;
+          min-height: 44px;
+          padding: var(--space-3) var(--space-6);
+          background-color: var(--color-primary-dark);
+          color: var(--color-primary-fg);
+          border: 1px solid var(--color-primary-dark);
+          border-radius: var(--radius-md);
+          font-size: var(--text-base);
+          font-weight: 600;
+          cursor: pointer;
+          transition: background-color 160ms ease, color 160ms ease, border-color 160ms ease;
+          margin-bottom: var(--space-4);
+        }
+        .submit-order-btn:hover:not(:disabled),
+        .submit-order-btn:focus-visible:not(:disabled) {
+          background-color: #d89700 !important;
+          color: var(--color-primary-dark) !important;
+          border-color: #d89700 !important;
+          transform: none !important;
+        }
+        .submit-order-btn:disabled {
+          opacity: 0.7;
+          cursor: wait;
+        }
 
         .back-cart-link { display: flex; align-items: center; justify-content: center; gap: var(--space-2); font-size: var(--text-xs); color: var(--color-ink-3); text-decoration: none; }
 

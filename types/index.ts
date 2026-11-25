@@ -1,7 +1,7 @@
 // types/index.ts — Domain models for CRRDC platform
 // All types mirror the Supabase schema exactly.
 
-export type ProductCategory = "seed" | "rice" | "other";
+export type ProductCategory = "seed" | "rice" | "seedling" | "other";
 export type ProductUnitType = "packet" | "kg" | "sack" | "unit";
 export type OrderStatus =
   | "pending"
@@ -19,6 +19,7 @@ export interface Product {
   id: string;
   name: string;
   description: string | null;
+  specification?: string | null;
   category: ProductCategory;
   unit_type: ProductUnitType;
   price_php: number;
@@ -28,6 +29,7 @@ export interface Product {
   low_stock_threshold?: number;
   image_url: string | null;
   is_active: boolean;
+  is_popular?: boolean;
   created_at: string;
   updated_at: string;
   updated_by?: string | null;

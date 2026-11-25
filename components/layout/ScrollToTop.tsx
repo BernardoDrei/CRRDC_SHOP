@@ -37,8 +37,8 @@ export default function ScrollToTop() {
       <style>{`
         .scroll-to-top {
           position: fixed;
-          bottom: var(--space-6);
-          right: var(--space-6);
+          bottom: calc(1.5rem + 52px);
+          right: 1.5rem;
           width: 44px;
           height: 44px;
           border-radius: var(--radius-full);
@@ -50,7 +50,7 @@ export default function ScrollToTop() {
           justify-content: center;
           cursor: pointer;
           box-shadow: 0 4px 16px oklch(0% 0 0 / 0.2);
-          z-index: 50;
+          z-index: 990;
           transition: transform var(--dur-fast) var(--ease-out),
                       background-color var(--dur-fast) var(--ease-out);
           animation: fade-in var(--dur-base) var(--ease-out);
@@ -58,6 +58,13 @@ export default function ScrollToTop() {
         .scroll-to-top:hover {
           background-color: var(--color-primary);
           transform: translateY(-2px);
+        }
+
+        @media (max-width: 640px) {
+          .scroll-to-top {
+            bottom: calc(1.25rem + 52px);
+            right: 1.25rem;
+          }
         }
 
         @keyframes fade-in {

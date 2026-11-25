@@ -25,6 +25,7 @@ export default function ProductCard({ product }: ProductCardProps) {
   const CATEGORY_BADGES: Record<Product["category"], { label: string; class: string }> = {
     seed: { label: t("seeds"), class: "badge--seed" },
     rice: { label: t("rice"), class: "badge--rice" },
+    seedling: { label: "Seedlings", class: "badge--seedling" },
     other: { label: t("otherProducts"), class: "badge--other" },
   };
 
@@ -226,6 +227,10 @@ export default function ProductCard({ product }: ProductCardProps) {
         .badge--rice {
           background-color: oklch(from var(--color-accent-dim) l c h / 0.18);
           color: var(--color-accent-dim);
+        }
+        .badge--seedling {
+          background-color: oklch(from #15803d l c h / 0.15);
+          color: #15803d;
         }
         .badge--other {
           background-color: var(--color-paper-3);

@@ -5,7 +5,7 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useState, useEffect, useRef } from "react";
-import { ShoppingCart, Menu, X, UserCheck, LogIn, ArrowRight, Trash2, Sprout, Landmark } from "lucide-react";
+import { ShoppingCart, Menu, X, UserCheck, LogIn, ArrowRight, Trash2, Sprout, Landmark, Heart, User } from "lucide-react";
 import { useCart } from "@/hooks/useCart";
 import { formatPHP, breakdownRiceQty } from "@/types";
 import { useLanguage } from "./LanguageContext";
@@ -15,14 +15,10 @@ export default function Masthead() {
   const { items, totalItems, totalPHP, removeItem } = useCart();
   const { t } = useLanguage();
 
-  const NAV_LINKS = [
-    { href: "/", label: t("home") },
-    { href: "/catalog", label: t("catalog") },
-  ] as const;
-
   const [scrolled, setScrolled] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
   const [cartOpen, setCartOpen] = useState(false);
+  const [wishlistCount, setWishlistCount] = useState(0);
   const cartTimerRef = useRef<NodeJS.Timeout | null>(null);
 
   useEffect(() => {
@@ -35,6 +31,45 @@ export default function Masthead() {
     setMenuOpen(false);
     setCartOpen(false);
   }, [pathname]);
+
+  // Wishlist count synchronization across pages
+  useEffect(() => {
+    const updateWishlist = () => {
+      try {
+        const saved = localStorage.getItem("crrdc-wishlist");
+        if (saved) {
+          const list = JSON.parse(saved);
+          setWishlistCount(Array.isArray(list) ? list.length : 0);
+        } else {
+          setWishlistCount(0);
+        }
+      } catch {
+        setWishlistCount(0);
+      }
+    };
+
+    updateWishlist();
+    window.addEventListener("crrdc-wishlist-updated", updateWishlist);
+    window.addEventListener("storage", updateWishlist);
+    return () => {
+      window.removeEventListener("crrdc-wishlist-updated", updateWishlist);
+      window.removeEventListener("storage", updateWishlist);
+    };
+  }, []);
+
+  const handleOpenCart = (e: React.MouseEvent) => {
+    if (pathname === "/" || pathname.startsWith("/catalog")) {
+      e.preventDefault();
+      window.dispatchEvent(new CustomEvent("crrdc-open-cart"));
+    }
+  };
+
+  const handleOpenFavorites = (e: React.MouseEvent) => {
+    if (pathname === "/" || pathname.startsWith("/catalog")) {
+      e.preventDefault();
+      window.dispatchEvent(new CustomEvent("crrdc-open-favorites"));
+    }
+  };
 
   const handleMouseEnterCart = () => {
     if (cartTimerRef.current) clearTimeout(cartTimerRef.current);
@@ -74,133 +109,64 @@ export default function Masthead() {
             <span className="masthead__tagline">{t("tagline")}</span>
           </Link>
 
-          {/* Navigation — center (Home, Products) */}
-          <nav className="masthead__nav" aria-label="Main navigation">
-            <ul className="masthead__nav-list" role="list">
-              {NAV_LINKS.map(({ href, label }) => {
-                const isActive = href === "/" ? pathname === "/" : pathname.startsWith(href);
-                return (
-                  <li key={href}>
-                    <Link
-                      href={href}
-                      className="masthead__nav-link"
-                      aria-current={isActive ? "page" : undefined}
-                    >
-                      {label}
-                    </Link>
-                  </li>
-                );
-              })}
-            </ul>
-          </nav>
-
           {/* Right actions */}
           <div className="masthead__actions">
-            {/* Cart Icon & Hover Dropdown Preview */}
-            <div
-              className="masthead__cart-wrapper"
-              onMouseEnter={handleMouseEnterCart}
-              onMouseLeave={handleMouseLeaveCart}
+            {/* 1. "How Ordering Works" Text Button */}
+            <Link
+              href="/how-ordering-works"
+              className="masthead__ordering-btn"
+              aria-label="How Ordering Works"
             >
-              <Link
-                href="/cart"
-                className="masthead__cart-btn"
-                aria-label={`Shopping cart — ${totalItems} ${totalItems === 1 ? "item" : "items"}`}
-              >
-                <ShoppingCart size={20} aria-hidden="true" />
-                {totalItems > 0 && (
-                  <span className="masthead__cart-badge" aria-hidden="true">
-                    {totalItems > 99 ? "99+" : totalItems}
-                  </span>
-                )}
-              </Link>
+              How Ordering Works
+            </Link>
 
-              {/* Hover Dropdown Popover */}
-              <div
-                className="cart-popover"
-                data-open={cartOpen}
-                aria-hidden={!cartOpen}
-              >
-                <div className="cart-popover__header">
-                  <span className="cart-popover__title">Shopping Cart</span>
-                  <span className="cart-popover__count">{totalItems} {totalItems === 1 ? "item" : "items"}</span>
-                </div>
+            {/* 2. Favorites Button */}
+            <Link
+              href="/?openFavorites=true"
+              onClick={handleOpenFavorites}
+              className="masthead__icon-btn"
+              aria-label={`Favorites (${wishlistCount} saved)`}
+              title="Your Favorites"
+            >
+              <Heart
+                size={18}
+                className={wishlistCount > 0 ? "is-favorited" : ""}
+                fill={wishlistCount > 0 ? "var(--color-error)" : "none"}
+                stroke="currentColor"
+                aria-hidden="true"
+              />
+              {wishlistCount > 0 && (
+                <span className="masthead__badge masthead__badge--error" aria-hidden="true">
+                  {wishlistCount > 99 ? "99+" : wishlistCount}
+                </span>
+              )}
+            </Link>
 
-                {items.length === 0 ? (
-                  <div className="cart-popover__empty">
-                    <p>Your cart is empty</p>
-                    <Link href="/catalog" className="cart-popover__browse-link">
-                      Browse products
-                    </Link>
-                  </div>
-                ) : (
-                  <>
-                    <div className="cart-popover__items">
-                      {items.map(({ product, quantity }) => {
-                        const isRiceKg = product.unit_type === "kg";
-                        const riceBreakdown = isRiceKg ? breakdownRiceQty(quantity) : null;
-                        return (
-                          <div key={product.id} className="cart-popover__item">
-                            <div className="cart-popover__item-info">
-                              <span className="cart-popover__item-name">{product.name}</span>
-                              <span className="cart-popover__item-meta">
-                                Qty: {quantity} {isRiceKg ? "kg" : "unit(s)"}
-                                {isRiceKg && riceBreakdown && riceBreakdown.sacks > 0
-                                  ? ` (${riceBreakdown.sacks} sack${riceBreakdown.sacks > 1 ? "s" : ""})`
-                                  : ""}
-                              </span>
-                            </div>
+            {/* 3. Cart Button */}
+            <Link
+              href="/cart"
+              onClick={handleOpenCart}
+              className="masthead__icon-btn"
+              aria-label={`Shopping cart (${totalItems} items)`}
+              title="Shopping Cart"
+            >
+              <ShoppingCart size={18} stroke="currentColor" aria-hidden="true" />
+              {totalItems > 0 && (
+                <span className="masthead__badge masthead__badge--accent" aria-hidden="true">
+                  {totalItems > 99 ? "99+" : totalItems}
+                </span>
+              )}
+            </Link>
 
-                            <div className="cart-popover__item-right">
-                              <span className="cart-popover__item-price">
-                                {formatPHP(product.price_php * quantity)}
-                              </span>
-                              <button
-                                type="button"
-                                className="cart-popover__remove"
-                                onClick={() => removeItem(product.id)}
-                                title="Remove item"
-                              >
-                                <Trash2 size={14} aria-hidden="true" />
-                              </button>
-                            </div>
-                          </div>
-                        );
-                      })}
-                    </div>
-
-                    <div className="cart-popover__footer">
-                      <div className="cart-popover__subtotal">
-                        <span>Subtotal:</span>
-                        <span className="cart-popover__total-val">{formatPHP(totalPHP)}</span>
-                      </div>
-
-                      <div className="cart-popover__actions">
-                        <Link href="/cart" className="cart-popover__btn cart-popover__btn--secondary">
-                          View Cart
-                        </Link>
-                        <Link href="/checkout" className="cart-popover__btn cart-popover__btn--primary">
-                          Checkout <ArrowRight size={14} aria-hidden="true" />
-                        </Link>
-                      </div>
-                    </div>
-                  </>
-                )}
-              </div>
-            </div>
-
-            {/* Admin Login / Dashboard Button */}
-            {isAdminPath ? (
-              <Link href="/admin/dashboard" className="masthead__admin-btn">
-                <UserCheck size={16} aria-hidden="true" />
-                <span>Admin Dashboard</span>
-              </Link>
-            ) : (
-              <Link href="/admin/login" className="masthead__admin-btn">
-                <LogIn size={16} aria-hidden="true" />
-                <span>Admin Login</span>
-              </Link>
-            )}
+            {/* 4. User / Admin Button */}
+            <Link
+              href={isAdminPath ? "/admin/dashboard" : "/admin/login"}
+              className="masthead__icon-btn"
+              aria-label={isAdminPath ? "Admin Dashboard" : "Admin Login"}
+              title={isAdminPath ? "Admin Dashboard" : "Admin Account"}
+            >
+              <User size={18} stroke="currentColor" aria-hidden="true" />
+            </Link>
 
             {/* Mobile menu toggle */}
             <button
@@ -210,7 +176,7 @@ export default function Masthead() {
               aria-label={menuOpen ? "Close menu" : "Open menu"}
               onClick={() => setMenuOpen((o) => !o)}
             >
-              {menuOpen ? <X size={22} aria-hidden="true" /> : <Menu size={22} aria-hidden="true" />}
+              {menuOpen ? <X size={20} aria-hidden="true" /> : <Menu size={20} aria-hidden="true" />}
             </button>
           </div>
         </div>
@@ -225,21 +191,30 @@ export default function Masthead() {
         data-open={menuOpen}
       >
         <ul className="masthead__mobile-list" role="list">
-          {NAV_LINKS.map(({ href, label }) => (
-            <li key={href}>
-              <Link
-                href={href}
-                className="masthead__mobile-link"
-                aria-current={pathname === href ? "page" : undefined}
-                tabIndex={menuOpen ? 0 : -1}
-              >
-                {label}
-              </Link>
-            </li>
-          ))}
+          <li>
+            <Link
+              href="/how-ordering-works"
+              className="masthead__mobile-link"
+              tabIndex={menuOpen ? 0 : -1}
+            >
+              <span>How Ordering Works</span>
+            </Link>
+          </li>
+          <li>
+            <Link
+              href="/?openFavorites=true"
+              onClick={handleOpenFavorites}
+              className="masthead__mobile-link"
+              tabIndex={menuOpen ? 0 : -1}
+            >
+              <Heart size={18} aria-hidden="true" />
+              <span>Favorites ({wishlistCount})</span>
+            </Link>
+          </li>
           <li>
             <Link
               href="/cart"
+              onClick={handleOpenCart}
               className="masthead__mobile-link"
               tabIndex={menuOpen ? 0 : -1}
             >
@@ -263,7 +238,7 @@ export default function Masthead() {
                 className="masthead__mobile-link masthead__mobile-link--admin"
                 tabIndex={menuOpen ? 0 : -1}
               >
-                <LogIn size={18} aria-hidden="true" />
+                <User size={18} aria-hidden="true" />
                 <span>{t("adminLogin")}</span>
               </Link>
             )}
@@ -369,276 +344,134 @@ export default function Masthead() {
           letter-spacing: 0.02em;
         }
 
-        /* Nav */
-        .masthead__nav {
-          display: flex;
-          justify-content: center;
-        }
-        .masthead__nav-list {
-          display: flex;
-          list-style: none;
-          margin: 0;
-          padding: 0;
-          gap: var(--space-2);
-        }
-        .masthead__nav-link {
-          display: block;
-          padding: var(--space-2) var(--space-4);
-          font-size: var(--text-sm);
-          font-weight: 500;
-          color: oklch(from var(--color-primary-fg) l c h / 0.85);
-          text-decoration: none;
-          border-radius: var(--radius-md);
-          transition: color var(--dur-fast) var(--ease-out),
-                      background-color var(--dur-fast) var(--ease-out);
-          white-space: nowrap;
-          letter-spacing: 0.01em;
-        }
-        .masthead__nav-link:hover {
-          color: var(--color-primary-fg);
-          background-color: oklch(from var(--color-primary-fg) l c h / 0.1);
-        }
-        .masthead__nav-link[aria-current="page"] {
-          color: var(--color-accent);
-          background-color: oklch(from var(--color-primary-fg) l c h / 0.08);
-          font-weight: 600;
-        }
-
         /* Actions */
         .masthead__actions {
           display: flex;
           align-items: center;
-          gap: var(--space-4);
+          gap: var(--space-3);
           flex-shrink: 0;
         }
 
-        /* Cart Dropdown Wrapper */
-        .masthead__cart-wrapper {
-          position: relative;
-        }
-        .masthead__cart-btn {
-          position: relative;
-          display: flex;
+        /* "How Ordering Works" Text Button */
+        .masthead__ordering-btn {
+          display: inline-flex;
           align-items: center;
           justify-content: center;
-          width: 2.6rem;
-          height: 2.6rem;
-          border-radius: var(--radius-md);
-          color: oklch(from var(--color-primary-fg) l c h / 0.9);
-          text-decoration: none;
-          transition: color var(--dur-fast) var(--ease-out),
-                      background-color var(--dur-fast) var(--ease-out);
-        }
-        .masthead__cart-btn:hover {
-          color: var(--color-primary-fg);
+          height: 38px;
+          padding: 0 var(--space-4);
+          border-radius: var(--radius-full);
+          border: 1px solid oklch(from var(--color-primary-fg) l c h / 0.22);
           background-color: oklch(from var(--color-primary-fg) l c h / 0.12);
+          color: var(--color-primary-fg);
+          font-size: 0.8rem;
+          font-weight: 600;
+          text-decoration: none;
+          white-space: nowrap;
+          letter-spacing: 0.01em;
+          transition: background-color 180ms var(--ease-out),
+                      border-color 180ms var(--ease-out),
+                      color 180ms var(--ease-out);
         }
-        .masthead__cart-badge {
+        .masthead__ordering-btn:hover,
+        .masthead__ordering-btn:focus-visible {
+          background-color: #d89700 !important;
+          border-color: #d89700 !important;
+          color: var(--color-primary-dark) !important;
+        }
+        .masthead__ordering-btn:focus-visible {
+          outline: 2px solid var(--color-accent);
+          outline-offset: 2px;
+        }
+
+        /* Shared Icon Button Style: Favorites, Cart, User */
+        .masthead__icon-btn {
+          width: 38px;
+          height: 38px;
+          min-width: 38px;
+          min-height: 38px;
+          border-radius: var(--radius-full);
+          border: 1px solid oklch(from var(--color-primary-fg) l c h / 0.22);
+          background-color: oklch(from var(--color-primary-fg) l c h / 0.12);
+          color: var(--color-primary-fg);
+          display: inline-flex;
+          align-items: center;
+          justify-content: center;
+          cursor: pointer;
+          position: relative;
+          padding: 0;
+          text-decoration: none;
+          line-height: 1;
+          transition: background-color 180ms var(--ease-out),
+                      border-color 180ms var(--ease-out),
+                      color 180ms var(--ease-out);
+        }
+        .masthead__icon-btn:hover,
+        .masthead__icon-btn:focus-visible {
+          background-color: #d89700 !important;
+          border-color: #d89700 !important;
+          color: var(--color-primary-dark) !important;
+        }
+        .masthead__icon-btn:hover :global(svg),
+        .masthead__icon-btn:focus-visible :global(svg) {
+          stroke: var(--color-primary-dark) !important;
+        }
+        .masthead__icon-btn:hover :global(svg.is-favorited),
+        .masthead__icon-btn:focus-visible :global(svg.is-favorited) {
+          fill: var(--color-primary-dark) !important;
+          stroke: var(--color-primary-dark) !important;
+        }
+        .masthead__icon-btn:focus-visible {
+          outline: 2px solid var(--color-accent);
+          outline-offset: 2px;
+        }
+
+        /* Notification Badges */
+        .masthead__badge {
           position: absolute;
           top: -2px;
           right: -2px;
-          min-width: 1.2rem;
-          height: 1.2rem;
-          padding-inline: 0.25rem;
+          min-width: 18px;
+          height: 18px;
+          padding: 0 4px;
           border-radius: var(--radius-full);
-          background-color: var(--color-accent);
-          color: var(--color-accent-fg);
           font-size: 0.65rem;
-          font-weight: 700;
-          font-family: var(--font-body);
-          display: flex;
-          align-items: center;
-          justify-content: center;
+          font-weight: 800;
           line-height: 1;
-        }
-
-        /* Hover Popover */
-        .cart-popover {
-          position: absolute;
-          top: calc(100% + 8px);
-          right: 0;
-          width: 320px;
-          background-color: var(--color-paper);
-          border: 1px solid var(--color-border);
-          border-radius: var(--radius-xl);
-          box-shadow: 0 10px 30px oklch(0% 0 0 / 0.2);
-          padding: var(--space-4);
-          z-index: 120;
-          opacity: 0;
-          transform: translateY(-8px);
-          pointer-events: none;
-          transition: opacity var(--dur-fast) var(--ease-out),
-                      transform var(--dur-fast) var(--ease-out);
-        }
-        .cart-popover[data-open="true"] {
-          opacity: 1;
-          transform: translateY(0);
-          pointer-events: auto;
-        }
-        .cart-popover__header {
-          display: flex;
-          justify-content: space-between;
-          align-items: center;
-          padding-bottom: var(--space-3);
-          border-bottom: 1px solid var(--color-border);
-          margin-bottom: var(--space-3);
-        }
-        .cart-popover__title {
-          font-family: var(--font-display);
-          font-size: var(--text-base);
-          color: var(--color-heading);
-        }
-        .cart-popover__count {
-          font-size: var(--text-xs);
-          color: var(--color-ink-3);
-        }
-
-        .cart-popover__empty {
-          text-align: center;
-          padding-block: var(--space-6);
-        }
-        .cart-popover__empty p {
-          font-size: var(--text-sm);
-          color: var(--color-ink-2);
-          margin: 0 0 var(--space-2);
-        }
-        .cart-popover__browse-link {
-          font-size: var(--text-xs);
-          font-weight: 600;
-          color: var(--color-primary);
-          text-decoration: none;
-        }
-
-        .cart-popover__items {
-          max-height: 220px;
-          overflow-y: auto;
-          display: flex;
-          flex-direction: column;
-          gap: var(--space-3);
-          margin-bottom: var(--space-3);
-          padding-right: 2px;
-        }
-        .cart-popover__item {
-          display: flex;
-          justify-content: space-between;
-          align-items: center;
-          gap: var(--space-2);
-          padding-bottom: var(--space-2);
-          border-bottom: 1px dashed var(--color-border);
-        }
-        .cart-popover__item:last-child { border-bottom: none; }
-        .cart-popover__item-name {
-          font-weight: 600;
-          font-size: var(--text-xs);
-          color: var(--color-ink);
-          display: block;
-          white-space: nowrap;
-          overflow: hidden;
-          text-overflow: ellipsis;
-          max-width: 170px;
-        }
-        .cart-popover__item-meta {
-          font-size: 0.7rem;
-          color: var(--color-ink-3);
-        }
-        .cart-popover__item-right {
-          display: flex;
-          align-items: center;
-          gap: var(--space-2);
-        }
-        .cart-popover__item-price {
-          font-family: var(--font-mono);
-          font-size: var(--text-xs);
-          font-weight: 600;
-          color: var(--color-primary);
-        }
-        .cart-popover__remove {
-          background: none;
-          border: none;
-          color: var(--color-ink-3);
-          cursor: pointer;
-          padding: 2px;
-        }
-        .cart-popover__remove:hover { color: var(--color-error); }
-
-        .cart-popover__footer {
-          border-top: 1px solid var(--color-border);
-          padding-top: var(--space-3);
-        }
-        .cart-popover__subtotal {
-          display: flex;
-          justify-content: space-between;
-          font-size: var(--text-xs);
-          font-weight: 600;
-          color: var(--color-ink-2);
-          margin-bottom: var(--space-3);
-        }
-        .cart-popover__total-val {
-          font-family: var(--font-mono);
-          font-size: var(--text-sm);
-          color: var(--color-primary);
-        }
-
-        .cart-popover__actions {
-          display: grid;
-          grid-template-columns: 1fr 1fr;
-          gap: var(--space-2);
-        }
-        .cart-popover__btn {
           display: flex;
           align-items: center;
           justify-content: center;
-          gap: var(--space-1);
-          padding: var(--space-2) var(--space-3);
-          border-radius: var(--radius-md);
-          font-size: var(--text-xs);
-          font-weight: 600;
-          text-decoration: none;
+          border: 1.5px solid var(--color-primary-dark);
+          pointer-events: none;
         }
-        .cart-popover__btn--secondary {
-          background-color: var(--color-paper-2);
-          border: 1px solid var(--color-border);
-          color: var(--color-ink);
-        }
-        .cart-popover__btn--primary {
-          background-color: var(--color-primary);
-          color: var(--color-primary-fg);
-        }
-
-        .masthead__admin-btn {
-          display: inline-flex;
-          align-items: center;
-          gap: var(--space-2);
-          padding: var(--space-2) var(--space-5);
-          border: 1px solid oklch(from var(--color-primary-fg) l c h / 0.25);
-          border-radius: var(--radius-md);
-          background-color: oklch(from var(--color-primary-fg) l c h / 0.06);
-          color: var(--color-primary-fg);
-          font-size: var(--text-xs);
-          font-weight: 600;
-          text-decoration: none;
-          letter-spacing: 0.02em;
-          white-space: nowrap;
-          transition: background-color var(--dur-fast) var(--ease-out),
-                      border-color var(--dur-fast) var(--ease-out);
-        }
-        .masthead__admin-btn:hover {
+        .masthead__badge--accent {
           background-color: var(--color-accent);
           color: var(--color-accent-fg);
-          border-color: var(--color-accent);
+        }
+        .masthead__badge--error {
+          background-color: var(--color-error);
+          color: #ffffff;
         }
 
         .masthead__menu-toggle {
           display: none;
           align-items: center;
           justify-content: center;
-          width: 2.6rem;
-          height: 2.6rem;
-          border: none;
-          border-radius: var(--radius-md);
-          background: transparent;
+          width: 38px;
+          height: 38px;
+          border: 1px solid oklch(from var(--color-primary-fg) l c h / 0.22);
+          border-radius: var(--radius-full);
+          background-color: oklch(from var(--color-primary-fg) l c h / 0.12);
           color: var(--color-primary-fg);
           cursor: pointer;
+          transition: background-color 180ms var(--ease-out),
+                      border-color 180ms var(--ease-out),
+                      color 180ms var(--ease-out);
+        }
+        .masthead__menu-toggle:hover,
+        .masthead__menu-toggle:focus-visible {
+          background-color: #d89700 !important;
+          border-color: #d89700 !important;
+          color: var(--color-primary-dark) !important;
         }
 
         .masthead__mobile-nav {
@@ -685,28 +518,36 @@ export default function Masthead() {
           margin-top: var(--space-2);
         }
 
-        .masthead__mobile-lang-item {
-          padding-top: var(--space-2);
-          margin-top: var(--space-2);
-          border-top: 1px dashed oklch(from var(--color-primary-fg) l c h / 0.15);
-          display: flex;
-          align-items: center;
-          justify-content: flex-start;
-        }
-
         @media (max-width: 900px) {
-          .masthead__nav { display: none; }
           .masthead__menu-toggle { display: flex; }
           .masthead__mobile-nav { display: block; }
           .masthead__actions { gap: var(--space-2); }
-          .masthead__admin-btn { display: none; }
-          .masthead__logo-clsu, .masthead__logo-dot { display: none; }
-          .cart-popover { display: none; }
+        }
+        @media (max-width: 640px) {
+          .masthead__ordering-btn {
+            height: 34px;
+            padding: 0 10px;
+            font-size: 0.72rem;
+          }
+          .masthead__icon-btn {
+            width: 34px;
+            height: 34px;
+            min-width: 34px;
+            min-height: 34px;
+          }
+          .masthead__menu-toggle {
+            width: 34px;
+            height: 34px;
+          }
         }
         @media (max-width: 480px) {
           .masthead__tagline { display: none; }
           .masthead__logo-img { height: 30px; }
           .masthead__logo-crrdc { font-size: var(--text-lg); }
+          .masthead__ordering-btn {
+            padding: 0 7px;
+            font-size: 0.68rem;
+          }
         }
       `}</style>
     </>

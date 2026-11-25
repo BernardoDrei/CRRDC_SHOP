@@ -6,7 +6,7 @@ import type { ProductCategory } from "@/types";
 import CategoryFilter from "@/components/catalog/CategoryFilter";
 import CatalogGrid from "@/components/catalog/CatalogGrid";
 
-const VALID_CATEGORIES: ProductCategory[] = ["seed", "rice", "other"];
+const VALID_CATEGORIES: ProductCategory[] = ["seed", "rice", "seedling", "other"];
 const CATEGORY_META: Record<ProductCategory, { title: string; subtitle: string }> = {
   seed: {
     title: "Certified Seeds",
@@ -15,6 +15,10 @@ const CATEGORY_META: Record<ProductCategory, { title: string; subtitle: string }
   rice: {
     title: "Milled Rice",
     subtitle: "Premium milled rice from CRRDC's own varieties — sold per kilogram or 25-kg sack.",
+  },
+  seedling: {
+    title: "Vigorous Seedlings",
+    subtitle: "Ready-to-transplant vegetable and crop seedlings in sanitized seedling nursery trays.",
   },
   other: {
     title: "Other Produce & Inputs",

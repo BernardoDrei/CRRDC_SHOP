@@ -358,21 +358,29 @@ export default function CartView() {
         }
 
         .checkout-btn {
-          display: flex;
+          display: inline-flex;
           align-items: center;
           justify-content: center;
-          gap: var(--space-2);
+          gap: 8px;
+          min-height: 44px;
           width: 100%;
           padding: var(--space-3) var(--space-4);
-          background-color: var(--color-primary);
+          background-color: var(--color-primary-dark);
           color: var(--color-primary-fg);
+          border: 1px solid var(--color-primary-dark);
           border-radius: var(--radius-md);
           font-weight: 600;
           text-decoration: none;
-          transition: background-color var(--dur-fast) var(--ease-out);
+          transition: background-color 160ms ease, color 160ms ease, border-color 160ms ease;
           margin-bottom: var(--space-4);
         }
-        .checkout-btn:hover { background-color: var(--color-primary-hover); }
+        .checkout-btn:hover,
+        .checkout-btn:focus-visible {
+          background-color: #d89700 !important;
+          color: var(--color-primary-dark) !important;
+          border-color: #d89700 !important;
+          transform: none !important;
+        }
 
         .continue-link {
           display: flex;

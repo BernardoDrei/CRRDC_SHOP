@@ -13,6 +13,7 @@ export default function CategoryFilter() {
     { href: "/catalog", label: t("allProducts"), key: "all" },
     { href: "/catalog/seed", label: t("seeds"), key: "seed" },
     { href: "/catalog/rice", label: t("rice"), key: "rice" },
+    { href: "/catalog/seedling", label: "Seedlings", key: "seedling" },
     { href: "/catalog/other", label: t("otherProducts"), key: "other" },
   ];
 

@@ -23,18 +23,18 @@
   --color-paper-3:        oklch(93%   0.010 145);   /* hover fills, row stripes */
   --color-ink:            oklch(18%   0.020 145);   /* primary body text */
   --color-ink-2:          oklch(38%   0.015 145);   /* secondary/muted text */
-  --color-ink-3:          oklch(55%   0.012 145);   /* placeholders, disabled */
+  --color-ink-3:          #6d736d;   /* placeholders, disabled */
 
   /* Brand greens (CLSU Green #009639 / Green Cobra #1E6031) */
-  --color-primary:        oklch(55%   0.180 145);   /* CLSU Green — nav, primary btns */
-  --color-primary-dark:   oklch(38%   0.140 148);   /* Green Cobra — dark surfaces & headers */
+  --color-primary:        oklch(55.294% 0.17778 144.282);   /* CLSU Green — nav, primary btns */
+  --color-primary-dark:   #005408;   /* Green Cobra — dark surfaces & headers */
   --color-heading:        oklch(38%   0.140 148);   /* Headings color in light mode */
   --color-primary-hover:  oklch(48%   0.165 146);   /* hover on primary elements */
   --color-primary-fg:     oklch(98%   0.005 145);   /* text on primary surfaces */
 
   /* Brand yellows (CLSU Yellow #FFD700 / Gold #E0A70D) */
   --color-accent:         oklch(88%   0.180  98);   /* CLSU Yellow — badges, CTAs */
-  --color-accent-dim:     oklch(72%   0.160  80);   /* Gold — accent hover state */
+  --color-accent-dim:     #d89700;   /* Gold — accent hover state */
   --color-accent-fg:      oklch(18%   0.020 145);   /* text on accent fills */
 
   /* Functional */
@@ -163,6 +163,12 @@ body {
 .public-layout {
   padding-top: 4.5rem;
   min-height: 100vh;
+}
+
+@media (max-width: 768px) {
+  body:has(.storefront-page-container) .footer {
+    display: none !important;
+  }
 }
 
 /* ─── Admin Layout Architecture ────────────────────────────── */

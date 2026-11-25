@@ -1,0 +1,308 @@
+"use client";
+
+import { useEffect } from "react";
+import { Check, X, ShoppingBag } from "lucide-react";
+import type { Product } from "@/types";
+import { formatPHP } from "@/types";
+
+interface AddToCartModalProps {
+  product: Product | null;
+  quantity: number;
+  isOpen: boolean;
+  onClose: () => void;
+  onViewCart: () => void;
+}
+
+export default function AddToCartModal({
+  product,
+  quantity,
+  isOpen,
+  onClose,
+  onViewCart,
+}: AddToCartModalProps) {
+  // Auto-dismiss notification after 3500ms
+  useEffect(() => {
+    if (isOpen) {
+      const timer = setTimeout(() => {
+        onClose();
+      }, 3500);
+      return () => clearTimeout(timer);
+    }
+  }, [isOpen, onClose]);
+
+  if (!isOpen || !product) return null;
+
+  const lineTotal = product.price_php * quantity;
+
+  return (
+    <div className="add-to-cart-backdrop" onClick={onClose} aria-hidden={!isOpen}>
+      <div
+        className="add-to-cart-modal"
+        onClick={(e) => e.stopPropagation()}
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="modal-title"
+      >
+        {/* Close Button */}
+        <button
+          type="button"
+          className="modal-close-btn"
+          onClick={onClose}
+          aria-label="Close dialog"
+        >
+          <X size={18} />
+        </button>
+
+        {/* Confirmation Header */}
+        <div className="modal-header">
+          <div className="success-badge" aria-hidden="true">
+            <Check size={22} className="check-icon" />
+          </div>
+          <h2 id="modal-title" className="modal-title">
+            Added to your cart!
+          </h2>
+          <p className="modal-subtitle">
+            This item has been successfully added to your order.
+          </p>
+        </div>
+
+        {/* Product Summary Card */}
+        <div className="product-summary-card">
+          <img
+            src={product.image_url || "/images/placeholder-stats-bg.jpg"}
+            alt={product.name}
+            className="product-thumbnail"
+          />
+          <div className="product-info">
+            <h3 className="product-name">{product.name}</h3>
+            <p className="product-spec">
+              {product.specification || product.description || "Certified product"}
+            </p>
+            <div className="product-math">
+              <span className="unit-pricing">
+                {formatPHP(product.price_php).replace(".00", "")} × {quantity}
+              </span>
+              <span className="product-subtotal">
+                {formatPHP(lineTotal).replace(".00", "")}
+              </span>
+            </div>
+          </div>
+        </div>
+
+        {/* Action Buttons */}
+        <div className="modal-actions">
+          <button
+            type="button"
+            className="continue-btn"
+            onClick={onClose}
+          >
+            Continue Shopping
+          </button>
+          <button
+            type="button"
+            className="view-cart-btn"
+            onClick={() => {
+              onClose();
+              onViewCart();
+            }}
+          >
+            <ShoppingBag size={16} />
+            <span>View Cart</span>
+          </button>
+        </div>
+      </div>
+
+      <style jsx>{`
+        /* ── Non-blocking Viewport Overlay ── */
+        .add-to-cart-backdrop {
+          position: fixed;
+          inset: 0;
+          background: transparent;
+          pointer-events: none;
+          z-index: 10000;
+        }
+
+        /* ── Centered Modal Dialog (Constant Center Position) ── */
+        .add-to-cart-modal {
+          position: fixed;
+          top: 50%;
+          left: 50%;
+          transform: translate(-50%, -50%);
+          background: #ffffff;
+          border-radius: 20px;
+          width: 100%;
+          max-width: min(92vw, 440px);
+          max-height: 85vh;
+          overflow-y: auto;
+          padding: 24px;
+          box-shadow: 0 20px 60px oklch(0% 0 0 / 0.35);
+          display: flex;
+          flex-direction: column;
+          z-index: 10001;
+          pointer-events: auto;
+          animation: popCenter 200ms cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        @keyframes popCenter {
+          from {
+            opacity: 0;
+            transform: translate(-50%, -46%) scale(0.96);
+          }
+          to {
+            opacity: 1;
+            transform: translate(-50%, -50%) scale(1);
+          }
+        }
+
+        .modal-close-btn {
+          position: absolute;
+          top: 16px;
+          right: 16px;
+          width: 32px;
+          height: 32px;
+          border-radius: 50%;
+          border: 1px solid #e2e8f0;
+          background: #f8fafc;
+          color: #64748b;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          cursor: pointer;
+          transition: all 140ms ease;
+        }
+        .modal-close-btn:hover {
+          background: #f1f5f9;
+          color: #0f172a;
+        }
+
+        .modal-header {
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          text-align: center;
+          margin-bottom: 20px;
+        }
+        .success-badge {
+          width: 48px;
+          height: 48px;
+          border-radius: 50%;
+          background-color: #dcfce7;
+          color: #15803d;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          margin-bottom: 12px;
+        }
+        .modal-title {
+          font-size: 1.25rem;
+          font-weight: 800;
+          color: #14532d;
+          margin: 0 0 4px;
+          letter-spacing: -0.01em;
+        }
+        .modal-subtitle {
+          font-size: 0.8rem;
+          color: #64748b;
+          margin: 0;
+        }
+
+        .product-summary-card {
+          display: flex;
+          gap: 12px;
+          background-color: #f8fafc;
+          border: 1px solid #e2e8f0;
+          border-radius: 14px;
+          padding: 12px;
+          margin-bottom: 22px;
+          align-items: center;
+        }
+        .product-thumbnail {
+          width: 68px;
+          height: 68px;
+          border-radius: 10px;
+          object-fit: cover;
+          background-color: #ffffff;
+          flex-shrink: 0;
+        }
+        .product-info {
+          flex: 1;
+          display: flex;
+          flex-direction: column;
+          min-width: 0;
+        }
+        .product-name {
+          font-size: 0.9rem;
+          font-weight: 700;
+          color: #0f172a;
+          margin: 0 0 2px;
+          white-space: nowrap;
+          overflow: hidden;
+          text-overflow: ellipsis;
+        }
+        .product-spec {
+          font-size: 0.72rem;
+          color: #64748b;
+          margin: 0 0 6px;
+          white-space: nowrap;
+          overflow: hidden;
+          text-overflow: ellipsis;
+        }
+        .product-math {
+          display: flex;
+          align-items: baseline;
+          justify-content: space-between;
+        }
+        .unit-pricing {
+          font-size: 0.78rem;
+          color: #475569;
+          font-weight: 500;
+        }
+        .product-subtotal {
+          font-size: 1.1rem;
+          font-weight: 800;
+          color: #15803d;
+        }
+
+        .modal-actions {
+          display: flex;
+          gap: 10px;
+        }
+        .continue-btn {
+          flex: 1;
+          padding: 12px 14px;
+          border-radius: 12px;
+          border: 1.5px solid #cbd5e1;
+          background: #ffffff;
+          color: #334155;
+          font-weight: 700;
+          font-size: 0.84rem;
+          cursor: pointer;
+          transition: background-color 140ms ease;
+        }
+        .continue-btn:hover {
+          background-color: #f8fafc;
+        }
+        .view-cart-btn {
+          flex: 1;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          gap: 6px;
+          padding: 12px 14px;
+          border-radius: 12px;
+          border: none;
+          background-color: #15803d;
+          color: #ffffff;
+          font-weight: 800;
+          font-size: 0.84rem;
+          cursor: pointer;
+          box-shadow: 0 4px 12px rgba(21, 128, 61, 0.25);
+          transition: background-color 140ms ease;
+        }
+        .view-cart-btn:hover {
+          background-color: #166534;
+        }
+      `}</style>
+    </div>
+  );
+}
