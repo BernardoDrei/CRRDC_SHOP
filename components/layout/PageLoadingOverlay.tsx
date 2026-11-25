@@ -1,7 +1,6 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { Sprout } from "lucide-react";
 
 export default function PageLoadingOverlay() {
   const [loading, setLoading] = useState(true);
@@ -26,7 +25,13 @@ export default function PageLoadingOverlay() {
     <div className="page-loading-overlay" role="status" aria-label="Loading site">
       <div className="page-loading-content">
         <div className="page-loading-spinner">
-          <Sprout size={36} className="page-loading-icon" aria-hidden="true" />
+          <img
+            src="/icon.png"
+            alt="CRRDC Logo"
+            className="page-loading-logo"
+            width={48}
+            height={48}
+          />
         </div>
         <span className="page-loading-brand">CLSU · CRRDC</span>
         <span className="page-loading-text">Research Innovation and Extension</span>
@@ -53,17 +58,21 @@ export default function PageLoadingOverlay() {
           text-align: center;
         }
         .page-loading-spinner {
-          width: 64px;
-          height: 64px;
+          width: 72px;
+          height: 72px;
           border-radius: var(--radius-full);
-          background-color: oklch(from var(--color-primary-fg) l c h / 0.1);
+          background-color: oklch(from var(--color-primary-fg) l c h / 0.12);
           display: flex;
           align-items: center;
           justify-content: center;
           animation: pulse 1.2s ease-in-out infinite;
         }
-        .page-loading-icon {
-          color: var(--color-accent);
+        .page-loading-logo {
+          width: 48px;
+          height: 48px;
+          object-fit: contain;
+          border-radius: var(--radius-full);
+          filter: drop-shadow(0 2px 8px oklch(0% 0 0 / 0.3));
         }
         .page-loading-brand {
           font-family: var(--font-display);

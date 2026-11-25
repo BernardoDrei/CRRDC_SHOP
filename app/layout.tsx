@@ -26,11 +26,12 @@ export const metadata: Metadata = {
   },
   icons: {
     icon: [
+      { url: "/icon.png", type: "image/png" },
       { url: "/images/crrdc-logo.png", type: "image/png" },
     ],
-    shortcut: ["/images/crrdc-logo.png"],
+    shortcut: ["/icon.png"],
     apple: [
-      { url: "/images/crrdc-logo.png", type: "image/png" },
+      { url: "/icon.png", type: "image/png" },
     ],
   },
 };
