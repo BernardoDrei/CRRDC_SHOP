@@ -368,6 +368,7 @@ export default function Masthead() {
           text-decoration: none;
           white-space: nowrap;
           letter-spacing: 0.01em;
+          margin-right: 4px;
           transition: background-color 180ms var(--ease-out),
                       border-color 180ms var(--ease-out),
                       color 180ms var(--ease-out);

@@ -90,7 +90,7 @@ export default function HowOrderingWorksPage() {
           flex-direction: column;
           justify-content: center;
           align-items: center;
-          padding: clamp(16px, 2.5vh, 32px) clamp(16px, 3.5vw, 48px);
+          padding: clamp(20px, 3.2vh, 40px) clamp(16px, 3.5vw, 48px);
           box-sizing: border-box;
           overflow-x: hidden;
         }
@@ -107,7 +107,7 @@ export default function HowOrderingWorksPage() {
         /* ── Header ── */
         .page-header {
           text-align: center;
-          margin-bottom: clamp(16px, 2.8vh, 32px);
+          margin-bottom: clamp(22px, 3.8vh, 38px);
         }
 
         .page-title {
@@ -145,12 +145,12 @@ export default function HowOrderingWorksPage() {
         @media (max-width: 639px) {
           .how-ordering-page {
             justify-content: flex-start;
-            padding: 16px 16px 28px;
+            padding: 24px 16px 36px;
             min-height: auto;
           }
 
           .page-header {
-            margin-bottom: 16px;
+            margin-bottom: 22px;
           }
 
           .page-title {
@@ -159,7 +159,12 @@ export default function HowOrderingWorksPage() {
 
           .steps-grid {
             grid-template-columns: 1fr;
-            gap: 10px;
+            gap: 12px;
+          }
+
+          .cta-wrapper {
+            margin-top: 26px;
+            margin-bottom: 8px;
           }
         }
 
@@ -273,7 +278,7 @@ export default function HowOrderingWorksPage() {
         .cta-wrapper {
           display: flex;
           justify-content: center;
-          margin-top: clamp(16px, 2.5vh, 28px);
+          margin-top: clamp(24px, 4vh, 44px);
         }
 
         .cta-btn {
